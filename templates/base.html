@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Pictures</title>
+</head>
+<body>
+    <h1>Animal Pictures App</h1>
+
+    <form action="/save_pictures" method="POST">
+        <label for="animal_type">Animal Type:</label>
+        <input type="text" id="animal_type" name="animal_type" required>
+
+        <label for="num_pictures">Number of Pictures:</label>
+        <input type="number" id="num_pictures" name="num_pictures" required min="1">
+
+        <button type="submit">Save Pictures</button>
+    </form>
+
+    <h2>Retrieve Last Saved Picture</h2>
+    <form method="GET" action="#">
+        <label for="get_animal">Animal Type:</label>
+        <input type="text" id="get_animal" name="get_animal" required>
+        <button type="button" onclick="getLastPicture()">Get Last Picture</button>
+    </form>
+
+    <div id="picture_result"></div>
+
+    <script>
+        function getLastPicture() {
+            const animalType = document.getElementById('get_animal').value;
+            fetch(`/get_last_picture/${animalType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.last_picture_url) {
+                        document.getElementById('picture_result').innerHTML = `
+                            <h3>Last Picture of ${animalType}:</h3>
+                            <img src="${data.last_picture_url}" alt="${animalType} picture">
+                        `;
+                    } else {
+                        document.getElementById('picture_result').innerHTML = `<p>${data.error}</p>`;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
+

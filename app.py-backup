@@ -1,0 +1,54 @@
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+import requests
+from flask import send_from_directory
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///animals.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+#from app import app, db
+from models import AnimalPicture
+
+# Define the root route
+#@app.route('/')
+#def index():
+ #   return "Welcome to the Animal Pictures App!"
+
+@app.route('/')
+def serve_ui():
+    return send_from_directory('static', 'index.html')
+
+# Fetch and save pictures
+@app.route('/save_pictures', methods=['POST'])
+def save_pictures():
+    data = request.json
+    animal_type = data['animal_type']
+    num_pictures = data['num_pictures']
+
+    for _ in range(num_pictures):
+        # Fetch a picture from a public API (e.g., Unsplash, Pexels, etc.)
+        response = requests.get(f'https://api.example.com/animal_pictures/{animal_type}')
+        if response.status_code == 200:
+            picture_url = response.json().get('url')
+            picture = AnimalPicture(animal_type=animal_type, url=picture_url)
+            db.session.add(picture)
+        else:
+            return jsonify({'error': 'Could not fetch picture'}), 400
+
+    db.session.commit()
+    return jsonify({'message': f'Successfully saved {num_pictures} pictures of {animal_type}'}), 201
+
+# Fetch the last picture saved
+@app.route('/last_picture/<string:animal_type>', methods=['GET'])
+def get_last_picture(animal_type):
+    picture = AnimalPicture.query.filter_by(animal_type=animal_type).order_by(AnimalPicture.id.desc()).first()
+    if picture:
+        return jsonify({'animal_type': picture.animal_type, 'url': picture.url}), 200
+    else:
+        return jsonify({'error': 'No picture found for this animal type'}), 404
+
+if __name__ == '__main__':
+    app.run(debug=True)
+

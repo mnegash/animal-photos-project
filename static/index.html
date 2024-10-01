@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Picture Fetcher</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Animal Picture Fetcher</h1>
+    
+    <h2>Save Pictures</h2>
+    <form id="savePicturesForm">
+        Animal Type: <input type="text" id="animalType" required>
+        Number of Pictures: <input type="number" id="numPictures" required>
+        <button type="submit">Save Pictures</button>
+    </form>
+    
+    <h2>Last Picture of an Animal</h2>
+    <form id="getLastPictureForm">
+        Animal Type: <input type="text" id="lastAnimalType" required>
+        <button type="submit">Get Last Picture</button>
+    </form>
+
+    <div id="lastPictureResult"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Handle save pictures
+            $('#savePicturesForm').submit(function(event) {
+                event.preventDefault();
+                const animalType = $('#animalType').val();
+                const numPictures = $('#numPictures').val();
+                
+                $.ajax({
+                    url: '/save_pictures',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ animal_type: animalType, num_pictures: numPictures }),
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+
+            // Handle get last picture
+            $('#getLastPictureForm').submit(function(event) {
+                event.preventDefault();
+                const animalType = $('#lastAnimalType').val();
+
+                $.ajax({
+                    url: '/last_picture/' + animalType,
+                    method: 'GET',
+                    success: function(response) {
+                        $('#lastPictureResult').html(`<img src="${response.picture_url}" alt="${animalType} picture">`);
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
