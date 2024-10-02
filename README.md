@@ -1,9 +1,6 @@
-<<<<<<< HEAD
+
 # MyCamundaProject
 quick fetch save and animal python project.
-=======
->>>>>>> b980b67 (initial commit)
-# Animal Pictures API
 
 ## Description
 This application offers a REST API to save and retrieve pictures of animals. It uses Flask and SQLite for simplicity.
@@ -39,27 +36,10 @@ This application offers a REST API to save and retrieve pictures of animals. It 
 
 6. The app will be running at `http://localhost:5000`.
 
-<<<<<<< HEAD
-=======
-## Endpoints
-
-- `POST /save_pictures`: Saves animal pictures. Request format:
-    ```json
-    {
-        "animal_type": "cat",
-        "num_pictures": 1
-    }
-    ```
-- `GET /last_picture/<animal_type>`: Fetches the last picture saved for the specified animal type.
->>>>>>> b980b67 (initial commit)
-
 ## Tests
 
 Run automated tests with `pytest`:
 
 ```bash
 pytest tests/
-<<<<<<< HEAD
-=======
 
->>>>>>> b980b67 (initial commit)
